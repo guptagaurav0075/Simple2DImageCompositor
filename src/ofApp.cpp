@@ -1,16 +1,16 @@
 #include "ofApp.h"
 
 Image::Image(){
-  trans.x = 0;
-  trans.y = 0;
-  scale.x = 1.0;
-  scale.y = 1.0;
-  rot = 0;
-  isSelected = false;
-  isLoaded = false;
-//  id = currentImageIndex;
-//  currentImageIndex +=1;
-
+    trans.x = 0;
+    trans.y = 0;
+    scale.x = 1.0;
+    scale.y = 1.0;
+    rot = 0;
+    isSelected = false;
+    isLoaded = false;
+    //  id = currentImageIndex;
+    //  currentImageIndex +=1;
+    
 }
 //--------------------------------------------------------------
 
@@ -30,6 +30,7 @@ void Image::drawCorners(){
     ofSetColor(0, 255, 255);
     ofSetLineWidth(2);
     ofDrawRectangle(trans.x-2, trans.y-2, image.getWidth()+4, image.getHeight()+4);
+    
     
     //draw rectangles on the corners of the edges
     int handleSize = 20;
@@ -66,7 +67,36 @@ void Image::drawCorners(){
 }
 //--------------------------------------------------------------
 bool Image::inside(int xs, int ys){
+//    if(isCorner(xs, ys)){
+//        isScaling = true;
+//        return true;
+//    }
+//    else
     if((xs>=trans.x && xs <= trans.x+image.getWidth()) && (ys>=trans.y && ys<=image.getHeight()+trans.y)){
+        return true;
+    }
+    else if(xs>=trans.x-handleSize/2 && xs<=trans.x-handleSize/2){
+        //Check top-left corner
+    }
+    
+    return false;
+}//--------------------------------------------------------------
+bool Image::isCorner(int xs, int ys){
+    //check Top-Left corner
+    if((xs>=(trans.x-handleSize/2) && xs<=(trans.x+handleSize/2))&&(ys>=(trans.y-handleSize/2) && ys<=(trans.y+handleSize/2))){
+        cout<<"Top Left corner selected"<<endl;
+        return true;
+    }//Check Top-Right corner
+    else if((xs>=(trans.x+image.getWidth()-handleSize/2) && xs<=(trans.x+image.getWidth()+handleSize/2))&&(ys>=(trans.y-handleSize/2) && ys<=(trans.y+handleSize/2))){
+        cout<<"Top Right corner Selected"<<endl;
+        return true;
+    }//Check Bottom-Left corner
+    else if((xs>=(trans.x-handleSize/2) && xs<=(trans.x+handleSize/2))&&(ys>=(trans.y+image.getHeight()-handleSize/2) && ys<=(trans.y+image.getHeight()+handleSize/2))){
+        cout<<"Bottom-Left corner Selected"<<endl;
+        return true;
+    }//Check Bottom-Right corner
+    else if((xs>=(trans.x+image.getWidth()-handleSize/2) && xs<=(trans.x+image.getWidth()+handleSize/2))&&(ys>=(trans.y+image.getHeight()-handleSize/2) && ys<=(trans.y+image.getHeight()+handleSize/2))){
+        cout<<"Bottom-Right corner selected"<<endl;
         return true;
     }
     return false;
@@ -77,6 +107,9 @@ void ofApp::setup(){
     isDragged = false;
     currentImage = NULL;
     imageIsSelected = false;
+    isCorner = false;
+    isScaling = false;
+    isRotation = false;
     
 }
 //--------------------------------------------------------------
@@ -95,7 +128,7 @@ void ofApp::saveImg(){
 }
 //--------------------------------------------------------------
 void ofApp::draw(){
-
+    
     ofBackground(0, 0, 0);
     ofFill();
     for(int i = 0; i<images.size(); i++){
@@ -105,46 +138,51 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-  switch (key) {
-      case 'C':
-      case 'c':
-          break;
-
-      case 'F':
-      case 'f':
-          ofToggleFullscreen();
-          break;
-
-      case 'H':
-      case 'h':
-          break;
-      case 'S':
-      case 's':
-          saveImg();
-          break;
-      case 'r':
-      case 'u':
-      case ' ':
-          break;
-      case OF_KEY_LEFT:
-      case OF_KEY_RIGHT:
-          break;
-      case OF_KEY_DOWN:
-          moveDownInOrder();
-          break;
-      case OF_KEY_UP:
-          moveUpInOrder();
-          break;
-
-  }
+    switch (key) {
+        case OF_KEY_ALT:
+            isRotation = true;
+            break;
+        case 'C':
+        case 'c':
+            break;
+            
+        case 'F':
+        case 'f':
+            ofToggleFullscreen();
+            break;
+            
+        case 'H':
+        case 'h':
+            break;
+        case 'S':
+        case 's':
+            saveImg();
+            break;
+        case 'r':
+        case 'u':
+        case ' ':
+            break;
+        case OF_KEY_LEFT:
+        case OF_KEY_RIGHT:
+            break;
+        case OF_KEY_DOWN:
+            moveDownInOrder();
+            break;
+        case OF_KEY_UP:
+            moveUpInOrder();
+            break;
+            
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
     switch (key) {
+        case OF_KEY_ALT:
+            isRotation = false;
+            break;
         case OF_KEY_LEFT:
         case OF_KEY_RIGHT:
-        case OF_KEY_ALT:
         case OF_KEY_CONTROL:
         case OF_KEY_SHIFT:
             break;
@@ -153,31 +191,31 @@ void ofApp::keyReleased(int key){
             break;
         case ' ':
             break;
-
+            
         default:
             break;
-
+            
     }
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-//      cout<<"mouse \t("<<x<<" , "<<y<<" )"<<endl;
+    //      cout<<"mouse \t("<<x<<" , "<<y<<" )"<<endl;
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
     isDragged = true;
     if(images.size()==0 || currentImage == NULL){
-        cout<<"Going to return now"<<endl<<"Image size is :" <<images.size();
+        cout<<"Going to return now"<<endl<<"Image size is :" <<images.size()<<endl;;
         return;
     }
     ofPoint mouse_curr = ofPoint(x,y);
     ofVec3f delta = mouse_curr-mouse_last;
     this->currentImage->trans += delta;
     mouse_last = mouse_curr;
-
+    
 }
 
 //--------------------------------------------------------------
@@ -199,24 +237,35 @@ void ofApp::mouseReleased(int x, int y, int button){
         cout<<"Image is Selected \t"<<imageIsSelected<<endl;
     }
     isDragged = false;
+    isScaling = false;
     cout<<images.size()<<endl;
 }
 
 //--------------------------------------------------------------
 void ofApp::renderSelection(int x, int y){
     bool found = false;
+    int index = -1;
+    
     for(int i = images.size()-1; i>=0; i--){
-        if(images[i]->inside(x, y) && !found){
+        if((images[i]->inside(x, y) && !found)){
             this->currentImage = images[i];
             images.erase(images.begin()+i);
             images.push_back(currentImage);
             this->currentImage->bSelected=!this->currentImage->bSelected;
             found = true;
-        }else{
+            index = i;
+        }
+        else{
             images[i]->bSelected = false;
         }
     }
+    if(found){
+        if(images[index]->bSelected && images[index]->isCorner(x, y) && !isRotation){
+            isScaling = true;
+        }
+    }
 }
+
 //--------------------------------------------------------------
 void ofApp::moveUpInOrder(){
     if(currentImage!=NULL && images.size()>1){
@@ -247,8 +296,8 @@ void ofApp::moveDownInOrder(){
 }
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){
-  Image *newImage = new Image();
-  newImage->trans = dragInfo.position;
+    Image *newImage = new Image();
+    newImage->trans = dragInfo.position;
     if(newImage->image.load(dragInfo.files[0])==false){
         cout<<"Can't load image : "<<dragInfo.files[0]<<endl;
         delete newImage;
@@ -257,7 +306,7 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
         preImageAddingStep();
         newImage->bSelected = true;
         images.push_back(newImage);
-      }
+    }
 }
 //--------------------------------------------------------------
 void ofApp::preImageAddingStep(){

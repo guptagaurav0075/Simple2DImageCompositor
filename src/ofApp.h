@@ -11,6 +11,7 @@ public:
 	ofVec2f trans, scale;
 	float rot;
 	bool bSelected;
+    int handleSize = 20;
 };
 
 class Image : public BaseObject{
@@ -20,8 +21,11 @@ class Image : public BaseObject{
     void drawCorners();
     ofImage image;
     bool inside(int x, int y);
-	bool isLoaded = false;
+    bool isCorner(int x, int y);
+    bool isLoaded = false;
     bool isSelected = false;
+    bool isRotation = false;
+    bool isScaling = false;
 };
 
 class ofApp : public ofBaseApp{
@@ -49,7 +53,10 @@ class ofApp : public ofBaseApp{
 		void renderSelection(int x, int y);
 		void imgerase(Image *currentImage);
         ofVec3f mouse_last;
+        bool isCorner;
         bool imageIsSelected;
         bool isDragged;
+        bool isRotation;
+        bool isScaling;
     
 };
