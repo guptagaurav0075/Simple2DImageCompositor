@@ -18,16 +18,52 @@ void Image::draw(){
     ofPushMatrix();
     ofSetVerticalSync(true);
     if(bSelected){
-        ofNoFill();
-        ofSetColor(0, 255, 255);
-        ofSetLineWidth(2);
-        ofDrawRectangle(trans.x-2, trans.y-2, image.getWidth()+4, image.getHeight()+4);
+        drawCorners();
     }
     ofSetColor(255, 255, 255);
     image.draw(trans.x,trans.y);
     ofPopMatrix();
 }
-
+//--------------------------------------------------------------
+void Image::drawCorners(){
+    ofNoFill();
+    ofSetColor(0, 255, 255);
+    ofSetLineWidth(2);
+    ofDrawRectangle(trans.x-2, trans.y-2, image.getWidth()+4, image.getHeight()+4);
+    
+    //draw rectangles on the corners of the edges
+    int handleSize = 20;
+    //left-Upper corner
+    ofNoFill();
+    ofSetColor(255,0,0);
+    ofSetLineWidth(2);
+    ofDrawRectangle(trans.x-handleSize/2, trans.y-handleSize/2,handleSize ,handleSize);
+    
+    //Upper_Left corner
+    ofNoFill();
+    ofSetColor(255,0,0);
+    ofSetLineWidth(2);
+    ofDrawRectangle(trans.x-handleSize/2, trans.y-handleSize/2,handleSize ,handleSize);
+    
+    //Upper_Right corner
+    ofNoFill();
+    ofSetColor(255,0,0);
+    ofSetLineWidth(2);
+    ofDrawRectangle(trans.x+image.getWidth()-handleSize/2, trans.y-handleSize/2,handleSize ,handleSize);
+    
+    //Bottom_Left corner
+    ofNoFill();
+    ofSetColor(255,0,0);
+    ofSetLineWidth(2);
+    ofDrawRectangle(trans.x-handleSize/2, trans.y+image.getHeight()-handleSize/2,handleSize ,handleSize);
+    
+    //Bottom_Right corner
+    ofNoFill();
+    ofSetColor(255,0,0);
+    ofSetLineWidth(2);
+    ofDrawRectangle(trans.x+image.getWidth()-handleSize/2, trans.y+image.getHeight()-handleSize/2,handleSize ,handleSize);
+    
+}
 //--------------------------------------------------------------
 bool Image::inside(int xs, int ys){
     if((xs>=trans.x && xs <= trans.x+image.getWidth()) && (ys>=trans.y && ys<=image.getHeight()+trans.y)){
@@ -41,6 +77,7 @@ void ofApp::setup(){
     isDragged = false;
     currentImage = NULL;
     imageIsSelected = false;
+    
 }
 //--------------------------------------------------------------
 void ofApp::exit(){
@@ -173,7 +210,7 @@ void ofApp::renderSelection(int x, int y){
             this->currentImage = images[i];
             images.erase(images.begin()+i);
             images.push_back(currentImage);
-            this->currentImage->bSelected=true;
+            this->currentImage->bSelected=!this->currentImage->bSelected;
             found = true;
         }else{
             images[i]->bSelected = false;
@@ -217,7 +254,14 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
         delete newImage;
     }
     else{
-        newImage->bSelected = false;
+        preImageAddingStep();
+        newImage->bSelected = true;
         images.push_back(newImage);
       }
+}
+//--------------------------------------------------------------
+void ofApp::preImageAddingStep(){
+    for (int i=0; i<images.size(); i++) {
+        images[i]->bSelected = false;
+    }
 }

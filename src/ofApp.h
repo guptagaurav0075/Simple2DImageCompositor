@@ -2,6 +2,8 @@
 
 #include "ofMain.h"
 
+#define HANDLE_SIZE = 20;
+
 static int currentImageIndex = 0;
 
 class BaseObject{
@@ -15,6 +17,7 @@ class Image : public BaseObject{
 	public:
 	Image();
     void draw();
+    void drawCorners();
     ofImage image;
     bool inside(int x, int y);
 	bool isLoaded = false;
@@ -36,10 +39,13 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		vector<Image *> images;
 		Image *currentImage;
+    
+        void imageTranslate();
 
 		void saveImg();
         void moveUpInOrder();
         void moveDownInOrder();
+        void preImageAddingStep();
 		void renderSelection(int x, int y);
 		void imgerase(Image *currentImage);
         ofVec3f mouse_last;
