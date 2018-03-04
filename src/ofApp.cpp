@@ -3,8 +3,8 @@
 Image::Image(){
     trans.x = 0;
     trans.y = 0;
-    scale.x = 1.0;
-    scale.y = 1.0;
+    scale.x = 2.0;
+    scale.y = 2.0;
     rot = 0;
     isSelected = false;
     isLoaded = false;
@@ -16,11 +16,15 @@ Image::Image(){
 
 void Image::draw(){
     ofPushMatrix();
-    ofSetVerticalSync(true);
+    ofRotate(rot);
+    ofScale(scale);
+//    ofTranslate(trans);
+//    ofSetVerticalSync(true);
     if(bSelected){
         drawCorners();
     }
     ofSetColor(255, 255, 255);
+    
     image.draw(trans.x,trans.y);
     ofPopMatrix();
 }
@@ -207,17 +211,43 @@ void ofApp::mouseMoved(int x, int y ){
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
     isDragged = true;
+    
     if(images.size()==0 || currentImage == NULL){
-        cout<<"Going to return now"<<endl<<"Image size is :" <<images.size()<<endl;;
+//        cout<<"Going to return now"<<endl<<"Image size is :" <<images.size()<<endl;;
         return;
     }
+//    if(!isScaling && !isRotation){
+//        imageTranslate(x, y);
+//    }
+//    else if(isScaling && !isRotation){
+//        cout<<"Currently Scalling"<<endl;
+//        imageScale(x, y);
+//    }
+    imageTranslate(x, y);
+    
+}
+//--------------------------------------------------------------
+void ofApp::imageScale(int x, int y){
+    ofPoint mouse_curr = ofPoint(x,y);
+    ofVec3f delta = mouse_curr-mouse_last;
+    mouse_last = mouse_curr;
+    int wid = this->currentImage->image.getWidth();
+    int hgt = this->currentImage->image.getHeight();
+    cout<<"New Height is "<<hgt<<endl<<"New Wid is "<<wid<<endl;
+    this->currentImage->scale += -delta/this->currentImage->image.getWidth()/2;
+    this->currentImage->image.resize(wid-delta.x, hgt-delta.y);
+    wid = this->currentImage->image.getWidth();
+    hgt = this->currentImage->image.getHeight();
+    cout<<"New Height is "<<hgt<<endl<<"New Wid is "<<wid<<endl;
+    
+}
+//--------------------------------------------------------------
+void ofApp::imageTranslate(int x, int y){
     ofPoint mouse_curr = ofPoint(x,y);
     ofVec3f delta = mouse_curr-mouse_last;
     this->currentImage->trans += delta;
     mouse_last = mouse_curr;
-    
 }
-
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
     currentImage = NULL;
@@ -245,7 +275,13 @@ void ofApp::mouseReleased(int x, int y, int button){
 void ofApp::renderSelection(int x, int y){
     bool found = false;
     int index = -1;
-    
+    if(images[images.size()-1]->bSelected && images[images.size()-1]->isCorner(x, y) && !isRotation){
+        cout<<"Selected Image for scaling"<<endl;
+        this->currentImage = images[images.size()-1];
+        this->currentImage->bSelected = true;
+        isScaling = true;
+        return;
+    }
     for(int i = images.size()-1; i>=0; i--){
         if((images[i]->inside(x, y) && !found)){
             this->currentImage = images[i];
@@ -254,16 +290,24 @@ void ofApp::renderSelection(int x, int y){
             this->currentImage->bSelected=!this->currentImage->bSelected;
             found = true;
             index = i;
+            if(images[i]->isCorner(x, y) && !isRotation){
+                cout<<"Selected Image for scaling"<<endl;
+                isScaling = true;
+                return;
+            }
         }
         else{
             images[i]->bSelected = false;
         }
+    /**
+         if(found){
+            if(images[index]->bSelected && images[index]->isCorner(x, y) && !isRotation){
+                isScaling = true;
+            }
+         }
+     */
     }
-    if(found){
-        if(images[index]->bSelected && images[index]->isCorner(x, y) && !isRotation){
-            isScaling = true;
-        }
-    }
+    
 }
 
 //--------------------------------------------------------------

@@ -44,7 +44,9 @@ class ofApp : public ofBaseApp{
 		vector<Image *> images;
 		Image *currentImage;
     
-        void imageTranslate();
+        void imageTranslate(int x, int y);
+        void imageRotate();
+        void imageScale(int x, int y);
 
 		void saveImg();
         void moveUpInOrder();
