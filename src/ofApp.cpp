@@ -1,151 +1,48 @@
+
 #include "ofApp.h"
+#include "Manip.h"
 
-Image::Image(){
-    trans.x = 0;
-    trans.y = 0;
-    scale.x = 2.0;
-    scale.y = 2.0;
-    rot = 0;
-    isSelected = false;
-    isLoaded = false;
-    //  id = currentImageIndex;
-    //  currentImageIndex +=1;
-    
-}
-//--------------------------------------------------------------
 
-void Image::draw(){
-    ofPushMatrix();
-    ofRotate(rot);
-    ofScale(scale);
-//    ofTranslate(trans);
-//    ofSetVerticalSync(true);
-    if(bSelected){
-        drawCorners();
-    }
-    ofSetColor(255, 255, 255);
-    
-    image.draw(trans.x,trans.y);
-    ofPopMatrix();
-}
-//--------------------------------------------------------------
-void Image::drawCorners(){
-    ofNoFill();
-    ofSetColor(0, 255, 255);
-    ofSetLineWidth(2);
-    ofDrawRectangle(trans.x-2, trans.y-2, image.getWidth()+4, image.getHeight()+4);
-    
-    
-    //draw rectangles on the corners of the edges
-    int handleSize = 20;
-    //left-Upper corner
-    ofNoFill();
-    ofSetColor(255,0,0);
-    ofSetLineWidth(2);
-    ofDrawRectangle(trans.x-handleSize/2, trans.y-handleSize/2,handleSize ,handleSize);
-    
-    //Upper_Left corner
-    ofNoFill();
-    ofSetColor(255,0,0);
-    ofSetLineWidth(2);
-    ofDrawRectangle(trans.x-handleSize/2, trans.y-handleSize/2,handleSize ,handleSize);
-    
-    //Upper_Right corner
-    ofNoFill();
-    ofSetColor(255,0,0);
-    ofSetLineWidth(2);
-    ofDrawRectangle(trans.x+image.getWidth()-handleSize/2, trans.y-handleSize/2,handleSize ,handleSize);
-    
-    //Bottom_Left corner
-    ofNoFill();
-    ofSetColor(255,0,0);
-    ofSetLineWidth(2);
-    ofDrawRectangle(trans.x-handleSize/2, trans.y+image.getHeight()-handleSize/2,handleSize ,handleSize);
-    
-    //Bottom_Right corner
-    ofNoFill();
-    ofSetColor(255,0,0);
-    ofSetLineWidth(2);
-    ofDrawRectangle(trans.x+image.getWidth()-handleSize/2, trans.y+image.getHeight()-handleSize/2,handleSize ,handleSize);
-    
-}
-//--------------------------------------------------------------
-bool Image::inside(int xs, int ys){
-//    if(isCorner(xs, ys)){
-//        isScaling = true;
-//        return true;
-//    }
-//    else
-    if((xs>=trans.x && xs <= trans.x+image.getWidth()) && (ys>=trans.y && ys<=image.getHeight()+trans.y)){
-        return true;
-    }
-    else if(xs>=trans.x-handleSize/2 && xs<=trans.x-handleSize/2){
-        //Check top-left corner
-    }
-    
-    return false;
-}//--------------------------------------------------------------
-bool Image::isCorner(int xs, int ys){
-    //check Top-Left corner
-    if((xs>=(trans.x-handleSize/2) && xs<=(trans.x+handleSize/2))&&(ys>=(trans.y-handleSize/2) && ys<=(trans.y+handleSize/2))){
-        cout<<"Top Left corner selected"<<endl;
-        return true;
-    }//Check Top-Right corner
-    else if((xs>=(trans.x+image.getWidth()-handleSize/2) && xs<=(trans.x+image.getWidth()+handleSize/2))&&(ys>=(trans.y-handleSize/2) && ys<=(trans.y+handleSize/2))){
-        cout<<"Top Right corner Selected"<<endl;
-        return true;
-    }//Check Bottom-Left corner
-    else if((xs>=(trans.x-handleSize/2) && xs<=(trans.x+handleSize/2))&&(ys>=(trans.y+image.getHeight()-handleSize/2) && ys<=(trans.y+image.getHeight()+handleSize/2))){
-        cout<<"Bottom-Left corner Selected"<<endl;
-        return true;
-    }//Check Bottom-Right corner
-    else if((xs>=(trans.x+image.getWidth()-handleSize/2) && xs<=(trans.x+image.getWidth()+handleSize/2))&&(ys>=(trans.y+image.getHeight()-handleSize/2) && ys<=(trans.y+image.getHeight()+handleSize/2))){
-        cout<<"Bottom-Right corner selected"<<endl;
-        return true;
-    }
-    return false;
-}
 //--------------------------------------------------------------
 void ofApp::setup(){
-    currentImage = NULL;
-    isDragged = false;
-    currentImage = NULL;
-    imageIsSelected = false;
-    isCorner = false;
-    isScaling = false;
-    isRotation = false;
+    
+    manip = new Manip();
+    
+    ofSetVerticalSync(true);
+    ofEnableAlphaBlending();
+    
+    //
+    // set when <control> key is held down
+    //
+    ctrlKeyDown = false;
+    shiftKeyDown = false;
+    selectedImage = -1;      // selection empty;
+}
+
+//--------------------------------------------------------------
+void ofApp::update(){
     
 }
-//--------------------------------------------------------------
-void ofApp::exit(){
-    for(int i=images.size()-1; i>=0; i--){
-        delete images[i];
-    }
-    
-}
-//--------------------------------------------------------------
-void ofApp::saveImg(){
-    ofImage snapshot;
-    snapshot.grabScreen(0,0, ofGetWidth(), ofGetHeight());
-    string str ="snapshot_"+ofToString(ofGetMinutes())+"_"+ofToString(ofGetSeconds())+".jpg";
-    snapshot.save(str);
-}
+
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    ofBackground(0, 0, 0);
+    ofBackground(0);
     ofFill();
-    for(int i = 0; i<images.size(); i++){
-        images[i]->draw();
+    
+    for (int i = 0; i < images.size(); i++ ) {
+        images[i].draw();
     }
+    manip->draw(ManipDrawNormal);
 }
 
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+
+void ofApp::exit() {
+    delete manip;
+}
+
+void ofApp::keyPressed(int key) {
     switch (key) {
-        case OF_KEY_ALT:
-            isRotation = true;
-            break;
         case 'C':
         case 'c':
             break;
@@ -154,207 +51,249 @@ void ofApp::keyPressed(int key){
         case 'f':
             ofToggleFullscreen();
             break;
-            
         case 'H':
         case 'h':
             break;
-        case 'S':
-        case 's':
-            saveImg();
-            break;
         case 'r':
+            break;
+        case 's':
+        case 'S':
+            savePicture();
+            break;
         case 'u':
-        case ' ':
+            undoTransformations();
             break;
-        case OF_KEY_LEFT:
-        case OF_KEY_RIGHT:
+        case OF_KEY_ALT:
+            manip->isRotationEnabled = true;
             break;
-        case OF_KEY_DOWN:
-            moveDownInOrder();
+        case OF_KEY_CONTROL:
+            ctrlKeyDown = true;
             break;
-        case OF_KEY_UP:
-            moveUpInOrder();
+        case OF_KEY_SHIFT:
+            shiftKeyDown = true;
             break;
-            
+        case OF_KEY_DEL:
+            doDelete();
+            break;
     }
 }
 
+
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
+void ofApp::keyReleased(int key) {
     switch (key) {
+            
         case OF_KEY_ALT:
-            isRotation = false;
+            manip->isRotationEnabled = false;
             break;
-        case OF_KEY_LEFT:
-        case OF_KEY_RIGHT:
         case OF_KEY_CONTROL:
+            ctrlKeyDown = false;
+            break;
         case OF_KEY_SHIFT:
+            shiftKeyDown = false;
             break;
-        case OF_KEY_ESC:
-            ofExit();
-            break;
-        case ' ':
-            break;
-            
-        default:
-            break;
-            
     }
-    
 }
+
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-    //      cout<<"mouse \t("<<x<<" , "<<y<<" )"<<endl;
+    
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-    isDragged = true;
+//
+// If the manipulator is active, send mouse events to it to process
+//
+void ofApp::mouseDragged(int x, int y, int button) {
     
-    if(images.size()==0 || currentImage == NULL){
-//        cout<<"Going to return now"<<endl<<"Image size is :" <<images.size()<<endl;;
-        return;
+    if (manip->active)
+        manip->processMouse(x, y, button);
+}
+
+//---------------------------------------------------------
+//
+// delete the selected image
+//
+void ofApp::doDelete() {
+    if (imageSelected())
+    {
+        manip->disconnect();
+        images.erase(images.begin() + selectedImage);
+        selectedImage = -1;
     }
-//    if(!isScaling && !isRotation){
-//        imageTranslate(x, y);
-//    }
-//    else if(isScaling && !isRotation){
-//        cout<<"Currently Scalling"<<endl;
-//        imageScale(x, y);
-//    }
-    imageTranslate(x, y);
-    
 }
-//--------------------------------------------------------------
-void ofApp::imageScale(int x, int y){
-    ofPoint mouse_curr = ofPoint(x,y);
-    ofVec3f delta = mouse_curr-mouse_last;
-    mouse_last = mouse_curr;
-    int wid = this->currentImage->image.getWidth();
-    int hgt = this->currentImage->image.getHeight();
-    cout<<"New Height is "<<hgt<<endl<<"New Wid is "<<wid<<endl;
-    this->currentImage->scale += -delta/this->currentImage->image.getWidth()/2;
-    this->currentImage->image.resize(wid-delta.x, hgt-delta.y);
-    wid = this->currentImage->image.getWidth();
-    hgt = this->currentImage->image.getHeight();
-    cout<<"New Height is "<<hgt<<endl<<"New Wid is "<<wid<<endl;
-    
+
+//  Save the window to an image file on disk
+//
+void ofApp::savePicture() {
+    ofImage snapshot;
+    snapshot.grabScreen(0,0, ofGetWidth(), ofGetHeight());
+    string str ="snapshot_"+ofToString(ofGetMinutes())+"_"+ofToString(ofGetSeconds())+".jpg";
+    snapshot.save(str);
 }
-//--------------------------------------------------------------
-void ofApp::imageTranslate(int x, int y){
-    ofPoint mouse_curr = ofPoint(x,y);
-    ofVec3f delta = mouse_curr-mouse_last;
-    this->currentImage->trans += delta;
-    mouse_last = mouse_curr;
+
+//   Undo transformations. Set back to a reasonable default
+//
+void ofApp::undoTransformations() {
+    if (imageSelected()) {
+        int i = selectedImage;
+        images[i].scale = ofVec2f(1, 1);
+        images[i].trans = ofVec2f(0, 0);
+        images[i].rot = 0;
+    }
 }
+
 //--------------------------------------------------------------
+//
+//  Mouse is pressed down, test to see what objects are selected
+//
 void ofApp::mousePressed(int x, int y, int button){
-    currentImage = NULL;
-    mouse_last = ofPoint(x,y);
-    renderSelection(x, y);
+    renderSelection();
+    processSelection(x, y);
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-    if(this->currentImage !=NULL && isDragged){
-        images.push_back(this->currentImage);
-        this->currentImage->bSelected = true;
-        this->currentImage = NULL;
-    }
-    else if(this->currentImage != NULL && !isDragged){
-        imageIsSelected = !imageIsSelected;
-        cout<<"Image is Selected \t"<<imageIsSelected<<endl;
-    }
-    isDragged = false;
-    isScaling = false;
-    cout<<images.size()<<endl;
+    manip->setUniformActive(false);
+    manip->setNonUniformActive(false);
 }
 
 //--------------------------------------------------------------
-void ofApp::renderSelection(int x, int y){
-    bool found = false;
-    int index = -1;
-    if(images[images.size()-1]->bSelected && images[images.size()-1]->isCorner(x, y) && !isRotation){
-        cout<<"Selected Image for scaling"<<endl;
-        this->currentImage = images[images.size()-1];
-        this->currentImage->bSelected = true;
-        isScaling = true;
-        return;
-    }
-    for(int i = images.size()-1; i>=0; i--){
-        if((images[i]->inside(x, y) && !found)){
-            this->currentImage = images[i];
-            images.erase(images.begin()+i);
-            images.push_back(currentImage);
-            this->currentImage->bSelected=!this->currentImage->bSelected;
-            found = true;
-            index = i;
-            if(images[i]->isCorner(x, y) && !isRotation){
-                cout<<"Selected Image for scaling"<<endl;
-                isScaling = true;
-                return;
-            }
-        }
-        else{
-            images[i]->bSelected = false;
-        }
-    /**
-         if(found){
-            if(images[index]->bSelected && images[index]->isCorner(x, y) && !isRotation){
-                isScaling = true;
-            }
-         }
-     */
-    }
+void ofApp::mouseEntered(int x, int y){
     
 }
 
 //--------------------------------------------------------------
-void ofApp::moveUpInOrder(){
-    if(currentImage!=NULL && images.size()>1){
-        for(int i=images.size()-2; i>=0; i--){
-            if(images[i]==currentImage){
-                images[i] = images[i+1];
-                images[i+1] = currentImage;
-                currentImage = images[i+1];
-                break;
-            }
-        }
-    }
+void ofApp::mouseExited(int x, int y){
+    
 }
+
 //--------------------------------------------------------------
-void ofApp::moveDownInOrder(){
-    if(currentImage!=NULL && images.size()>1){
-        cout<<images.size()<<endl;
-        for(int i=images.size()-1; i>0; i--){
-            cout<<"Current Index :\t"<<i<<endl;
-            if(images[i]==currentImage){
-                images[i] = images[i-1];
-                images[i-1] = currentImage;
-                currentImage = images[i-1];
-                break;
-            }
-        }
-    }
+void ofApp::windowResized(int w, int h){
+    
 }
+
 //--------------------------------------------------------------
+void ofApp::gotMessage(ofMessage msg){
+    
+}
+
+//--------------------------------------------------------------
+//
+// Simple file drag and drop implementation.  Drop the image
+// under the
+//
 void ofApp::dragEvent(ofDragInfo dragInfo){
-    Image *newImage = new Image();
-    newImage->trans = dragInfo.position;
-    if(newImage->image.load(dragInfo.files[0])==false){
-        cout<<"Can't load image : "<<dragInfo.files[0]<<endl;
-        delete newImage;
+    
+    Image imageObj;
+    
+    if (imageObj.image.load(dragInfo.files[0]) == true)
+    {
+        // disconnect manipulator (if connected)
+        //
+        manip->disconnect();
+        
+        // translate image to drop location
+        //
+        imageObj.trans = ofVec3f(dragInfo.position.x, dragInfo.position.y);
+        
+        // save image on stack, select it and connect manipulator
+        //
+        imageObj.bSelected = true;
+        images.push_back(imageObj);
+        selectedImage = images.size() - 1;
+        manip->connect(&images[selectedImage]);
     }
-    else{
-        preImageAddingStep();
-        newImage->bSelected = true;
-        images.push_back(newImage);
+    else {
+        cout << "Can't load image: " << dragInfo.files[0] << endl;
     }
 }
-//--------------------------------------------------------------
-void ofApp::preImageAddingStep(){
-    for (int i=0; i<images.size(); i++) {
-        images[i]->bSelected = false;
+
+//
+// Render for the purposes of selection hit testing.  In this case
+// we use the color method. We render echo object as a different
+// value of r,g,b.  We then compare the pixel under the mouse. The
+// value is the index into the image list;
+//
+void ofApp::renderSelection() {
+    
+    ofBackground(0);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    //
+    // check for any images selected; the color index
+    // we use is simple the index of the image in the vector
+    //
+    for (int i = 0; i < images.size(); i++) {
+        images[i].draw(true, i);
+    }
+    
+    //
+    // check for manipulator handles selected
+    //
+    manip->draw(ManipDrawTestSelect);
+    
+    
+    
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    
+}
+
+void ofApp::processSelection(int x, int y) {
+    unsigned char res[4];
+    GLint viewport[4];
+    
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    glReadPixels(x, viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
+    
+    // check if manipulator to see which part of it is selected
+    // and set state.
+    //
+    if (manip->isAUniformHandle(res[1])) {
+        manip->setUniformActive(true);
+        manip->setUniformHandle(res[1]);
+        manip->setMouse(x, y);
+        //        cout << "handle: " << res[1] << endl;
+        return;
+    }
+    else if(manip->isANonUniformHandle(res[1])){
+        manip->setNonUniformActive(true);
+        manip->setNonUniformHandle(res[1]);
+        manip->setMouse(x, y);
+        return;
+    }
+    else if (manip->isATranslateBox(res[1])) {
+        //        manip->setUniformActive(true);
+        manip->active = true;
+        manip->setMouse(x, y);
+        return;
+    }
+    
+    // Manipulator not selected, disconnect
+    //
+    if (imageSelected()) {
+        images[selectedImage].bSelected = false;
+        selectedImage = -1;
+        manip->disconnect();
+    }
+    
+    if (res[0] > 0 && res[0] <= images.size()) {
+        int id = res[0] - 1;
+        Image img = images[id];
+        img.bSelected = true;
+        
+        // move selected image to end of list
+        //
+        images.erase(images.begin() + id );
+        images.push_back(img);
+        selectedImage = images.size() - 1;
+        
+        // connect manipulator
+        //
+        manip->connect(&images[selectedImage]);
     }
 }
+
+
