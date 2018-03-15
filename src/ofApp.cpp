@@ -82,16 +82,25 @@ void ofApp::keyPressed(int key) {
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
 	switch (key) {
-
-	case OF_KEY_ALT:
+        case OF_KEY_UP:
+            if (shiftKeyDown) {
+                moveUpInOrder();
+            }
+            break;
+        case OF_KEY_DOWN:
+            if(shiftKeyDown){
+                moveDownInOrder();
+            }
+            break;
+        case OF_KEY_ALT:
             manip->isRotationEnabled = false;
-		break;
-	case OF_KEY_CONTROL:
-		ctrlKeyDown = false;
-		break;
-	case OF_KEY_SHIFT:
-		shiftKeyDown = false;
-		break;
+            break;
+        case OF_KEY_CONTROL:
+            ctrlKeyDown = false;
+            break;
+        case OF_KEY_SHIFT:
+            shiftKeyDown = false;
+            break;
 	}
 }
 
@@ -295,4 +304,29 @@ void ofApp::processSelection(int x, int y) {
 		manip->connect(&images[selectedImage]);
 	}
 }
+//TODO: Implement level ordering based on the down key pressed
+void ofApp::moveDownInOrder(){
+    int size = images.size();
+    if(selectedImage>-1 and size>1 and !ctrlKeyDown and shiftKeyDown){
+        int nextImage = (size+selectedImage-1)%size;
+        swapImage(nextImage);
+    }
+}
+//Implemented level ordering based on the up key pressed
 
+void ofApp::moveUpInOrder(){
+    int size = images.size();
+    if(selectedImage>-1 and size>1 and !ctrlKeyDown and shiftKeyDown){
+        int nextImage = (selectedImage+1)%size;
+        swapImage(nextImage);
+    }
+}
+void ofApp::swapImage(int nextIndex){
+    Image currentImage = images[selectedImage];
+    images[selectedImage] = images[nextIndex];
+    images[nextIndex] = currentImage;
+    images[selectedImage].bSelected = false;
+    images[nextIndex].bSelected = true;
+    selectedImage = nextIndex;
+    //images.erase(images.begin()+selectedImage);
+}
