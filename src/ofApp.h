@@ -1,49 +1,50 @@
+//--------------------------------------------------------------
+//
+//  CS235 - User Interface Design - Gaurav Gupta
+//
+//
+
 #pragma once
 
 #include "ofMain.h"
+#include "Image.h"
 
-static int currentImageIndex = 0;
-
-class BaseObject{
-public:
-    ofVec2f trans, scale;
-    float rot;
-    bool bSelected;
-};
-
-class Image : public BaseObject{
-public:
-    Image();
-    void draw();
-    ofImage image;
-    bool inside(int x, int y);
-    bool isLoaded = false;
-    bool isSelected = false;
-};
+class Manip;
 
 class ofApp : public ofBaseApp{
-public:
-    void setup();
-    void draw();
-    void exit();
-    
-    void keyPressed(int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y );
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void dragEvent(ofDragInfo dragInfo);
-    vector<Image *> images;
-    Image *currentImage;
-    
-    void saveImg();
-    void moveUpInOrder();
-    void moveDownInOrder();
-    void renderSelection(int x, int y);
-    void imgerase(Image *currentImage);
-    ofVec3f mouse_last;
-    bool imageIsSelected;
-    bool isDragged;
-    
+
+	public:
+		void setup();
+		void update();
+		void draw();
+		void exit();
+		void doDelete();
+		void renderSelection();
+		void processSelection(int x, int y);
+		void savePicture();
+		bool imageSelected() { return selectedImage > -1;  }
+		void undoTransformations();
+
+		void keyPressed(int key);
+		void keyReleased(int key);
+		void mouseMoved(int x, int y );
+		void mouseDragged(int x, int y, int button);
+		void mousePressed(int x, int y, int button);
+		void mouseReleased(int x, int y, int button);
+		void mouseEntered(int x, int y);
+		void mouseExited(int x, int y);
+		void windowResized(int w, int h);
+		void dragEvent(ofDragInfo dragInfo);
+		void gotMessage(ofMessage msg);
+
+		Manip		*manip;
+
+	private:
+
+		bool		ctrlKeyDown;
+		bool		shiftKeyDown;
+
+		vector<Image>	images;
+		int			    selectedImage;
+
 };
