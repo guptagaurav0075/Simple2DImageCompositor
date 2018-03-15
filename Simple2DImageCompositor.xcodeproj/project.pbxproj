@@ -8,8 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
-		F448E4FC205B0CB3008F7F11 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F448E4FA205B0CB3008F7F11 /* ofApp.cpp */; };
-		F448E4FD205B0CB3008F7F11 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F448E4FB205B0CB3008F7F11 /* main.cpp */; };
+		F448E505205B1754008F7F11 /* Manip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F448E4FF205B1754008F7F11 /* Manip.cpp */; };
+		F448E506205B1754008F7F11 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F448E502205B1754008F7F11 /* main.cpp */; };
+		F448E507205B1754008F7F11 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F448E503205B1754008F7F11 /* ofApp.cpp */; };
+		F448E508205B1754008F7F11 /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F448E504205B1754008F7F11 /* Image.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,9 +49,13 @@
 		E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = "openFrameworks-Info.plist"; sourceTree = "<group>"; };
 		E4EB691F138AFCF100A09F29 /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = CoreOF.xcconfig; path = ../../../libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig; sourceTree = SOURCE_ROOT; };
 		E4EB6923138AFD0F00A09F29 /* Project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Project.xcconfig; sourceTree = "<group>"; };
-		F448E4F9205B0CB2008F7F11 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofApp.h; path = "../../../../../../Study/Course_Work/CS 235 UI/Submissions/CS_235/src/ofApp.h"; sourceTree = "<group>"; };
-		F448E4FA205B0CB3008F7F11 /* ofApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofApp.cpp; path = "../../../../../../Study/Course_Work/CS 235 UI/Submissions/CS_235/src/ofApp.cpp"; sourceTree = "<group>"; };
-		F448E4FB205B0CB3008F7F11 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = "../../../../../../Study/Course_Work/CS 235 UI/Submissions/CS_235/src/main.cpp"; sourceTree = "<group>"; };
+		F448E4FE205B1754008F7F11 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofApp.h; path = ../../ImageManipulator/src/ofApp.h; sourceTree = "<group>"; };
+		F448E4FF205B1754008F7F11 /* Manip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Manip.cpp; path = ../../ImageManipulator/src/Manip.cpp; sourceTree = "<group>"; };
+		F448E500205B1754008F7F11 /* Manip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Manip.h; path = ../../ImageManipulator/src/Manip.h; sourceTree = "<group>"; };
+		F448E501205B1754008F7F11 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Image.h; path = ../../ImageManipulator/src/Image.h; sourceTree = "<group>"; };
+		F448E502205B1754008F7F11 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../ImageManipulator/src/main.cpp; sourceTree = "<group>"; };
+		F448E503205B1754008F7F11 /* ofApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofApp.cpp; path = ../../ImageManipulator/src/ofApp.cpp; sourceTree = "<group>"; };
+		F448E504205B1754008F7F11 /* Image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Image.cpp; path = ../../ImageManipulator/src/Image.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,9 +108,13 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				F448E4FB205B0CB3008F7F11 /* main.cpp */,
-				F448E4FA205B0CB3008F7F11 /* ofApp.cpp */,
-				F448E4F9205B0CB2008F7F11 /* ofApp.h */,
+				F448E504205B1754008F7F11 /* Image.cpp */,
+				F448E501205B1754008F7F11 /* Image.h */,
+				F448E502205B1754008F7F11 /* main.cpp */,
+				F448E4FF205B1754008F7F11 /* Manip.cpp */,
+				F448E500205B1754008F7F11 /* Manip.h */,
+				F448E503205B1754008F7F11 /* ofApp.cpp */,
+				F448E4FE205B1754008F7F11 /* ofApp.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -205,8 +215,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F448E4FC205B0CB3008F7F11 /* ofApp.cpp in Sources */,
-				F448E4FD205B0CB3008F7F11 /* main.cpp in Sources */,
+				F448E507205B1754008F7F11 /* ofApp.cpp in Sources */,
+				F448E505205B1754008F7F11 /* Manip.cpp in Sources */,
+				F448E508205B1754008F7F11 /* Image.cpp in Sources */,
+				F448E506205B1754008F7F11 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
