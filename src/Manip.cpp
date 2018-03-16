@@ -28,7 +28,7 @@ void Manip::draw(ManipDrawMode mode) {
 
     //
     // manipulator is drawn in world space for this demo, but probably better to draw in
-    // screen space (for 3D) to avoid scaling of handles when camera zooms in/out...KMS
+    // screen space (for 3D) to avoid scaling of handles when camera zooms in/out...GG
     //
     ofPushMatrix();
 
@@ -93,13 +93,13 @@ void Manip::draw(ManipDrawMode mode) {
         ofDrawRectangle((w / 2) - s / 2, (-h / 2) - s / 2, s, s);
         
         ofSetColor(0, HANDLE_ID_UP, 0);
-        ofDrawRectangle(-s/2, (-h/2) -s/2,s, s);
+        ofDrawRectangle(-s/2, (-h/2) -2*s,s, 3*s);
         ofSetColor(0, HANDLE_ID_RIGHT, 0);
-        ofDrawRectangle(((w/2) -s/2),-s/2,s, s);
+        ofDrawRectangle(((w/2) -s),-s/2,3*s, s);
         ofSetColor(0, HANDLE_ID_DOWN, 0);
-        ofDrawRectangle(-s/2,(h/2)-s/2,s, s);
+        ofDrawRectangle(-s/2,(h/2)-s,s, 3*s);
         ofSetColor(0, HANDLE_ID_LEFT, 0);
-        ofDrawRectangle(((-w/2)-s/2),-s/2,s, s);
+        ofDrawRectangle(((-w/2)-2*s),-s/2,s, s);
     }
     else {
         
@@ -200,7 +200,8 @@ void Manip::rotate(int x, int y) {
     ofVec2f delta = mouse - mouseLast;
     float rotation = delta.length();
     
-    if(mouse.x<mouseLast.x){//} || mouse.y<mouseLast.y){
+    
+    if(mouse.x>mouseLast.x ){
         rotation = -rotation;
     }
     
